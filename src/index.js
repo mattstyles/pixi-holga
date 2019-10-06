@@ -15,7 +15,11 @@ const setInitialBounds = (bounds, viewport, def) => {
     return bounds
   }
 
-  return Rect.of(viewport ? viewport : def)
+  return Rect.of(viewport || def)
+}
+
+const setScale = zoom => {
+  return Math.pow(2, zoom - 1)
 }
 
 /**
@@ -57,7 +61,7 @@ export class Camera {
 
     // Scale is applied at render to sprites, we calculate eagerly as don’t
     // really want an unnecessary power application during render loop
-    this._scale = Math.pow(2, this.zoom - 1)
+    this._scale = setScale(this.zoom)
 
     // With _maxViewport we're really after dimensions, this will give it to us
     // but x1, y1 will not necessarily be 0, which is probably unexpected.
@@ -73,8 +77,8 @@ export class Camera {
    */
   getScreenBounds () {
     return Point.of(
-      (this.viewport.width * this._scale) * this.settings.cellSize.x,
-      (this.viewport.height * this._scale) * this.settings.cellSize.y
+      this.viewport.width * this._scale * this.settings.cellSize.x,
+      this.viewport.height * this._scale * this.settings.cellSize.y
     )
   }
 
@@ -137,7 +141,8 @@ export class Camera {
    * Zoom level is a linear range, but, it scales exponentially.
    */
   _setScale (zoom) {
-    this._scale = Math.pow(2, zoom - 1)
+    zoom = zoom || this.zoom
+    this._scale = setScale(zoom)
   }
 
   /**

@@ -1,6 +1,6 @@
 
 import tape from 'tape'
-import { Rect } from 'mathutil'
+import { Rect, Point } from 'mathutil'
 
 import { Camera } from './'
 
@@ -42,7 +42,7 @@ tape('Camera::of default setting overrides', t => {
   t.deepEqual(c2.viewport.pos, [0, 0, 16, 16], 'default viewport is assigned correctly')
 })
 
-tape('Camera:of initial world bounds', t => {
+tape('Camera::of initial world bounds', t => {
   t.plan(7)
 
   const c1 = Camera.of()
@@ -69,4 +69,71 @@ tape('Camera:of initial world bounds', t => {
   })
   t.deepEqual(c4.viewport.pos, [0, 0, 5, 5], 'viewport is assigned correctly')
   t.deepEqual(c4.bounds.pos, [0, 0, 20, 20], 'bounds are assigned correctly')
+})
+
+tape('Camera::getScreenBounds', t => {
+  t.plan(6)
+
+  // Screen bounds are viewport [width, height] x scale x cellsize
+
+  const c1 = Camera.of()
+  const e1 = (16 * 1 * 10)
+  t.deepEqual(
+    c1.getScreenBounds().pos, [e1, e1],
+    'Bounds for default values calculated correctly'
+  )
+
+  const c2 = Camera.of({
+    viewport: Rect.of(0, 0, 24, 24)
+  })
+  const e2 = (24 * 1 * 10)
+  t.deepEqual(
+    c2.getScreenBounds().pos, [e2, e2],
+    'screen bounds for square viewport correct'
+  )
+
+  const c3 = Camera.of({
+    viewport: Rect.of(0, 0, 48, 32)
+  })
+  const e3 = Point.of(
+    48 * 1 * 10,
+    32 * 1 * 10
+  )
+  t.deepEqual(
+    c3.getScreenBounds().pos, [e3.x, e3.y],
+    'Bounds for non-square viewport correct'
+  )
+
+  const c4 = Camera.of({
+    viewport: Rect.of(10, 10, 24, 24)
+  })
+  const e4 = (14 * 1 * 10)
+  t.deepEqual(
+    c4.getScreenBounds().pos, [e4, e4],
+    'screen bounds correct when viewport is translated'
+  )
+
+  // the zoom multiplication is irrelevant as our expected values always
+  // assume max viewport size
+  const c5 = Camera.of({
+    viewport: Rect.of(0, 0, 24, 24)
+  })
+  c5.setZoom(2)
+  const e5 = (24 * 10)
+  t.deepEqual(
+    c5.getScreenBounds().pos, [e5, e5],
+    'screen bounds correct when camera is zoomed'
+  )
+
+  const c6 = Camera.of({
+    viewport: Rect.of(0, 0, 24, 24),
+    settings: {
+      cellSize: Point.of(16, 16)
+    }
+  })
+  const e6 = (24 * 1 * 16)
+  t.deepEqual(
+    c6.getScreenBounds().pos, [e6, e6],
+    'screen bounds correct when cell size changes'
+  )
 })
