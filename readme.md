@@ -3,7 +3,7 @@
 
 > Pixi-powered camera
 
-[![npm](https://img.shields.io/npm/v/pixi-holga.svg?style=flat)](https://www.npmjs.com/package/raid)
+[![npm](https://img.shields.io/npm/v/pixi-holga.svg?style=flat)](https://www.npmjs.com/package/pixi-holga)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Build Status](https://travis-ci.org/mattstyles/pixi-holga.svg?branch=master)](https://travis-ci.org/mattstyles/pixi-holga)
 [![Coverage Status](https://coveralls.io/repos/mattstyles/pixi-holga/badge.svg?branch=master&service=github)](https://coveralls.io/github/mattstyles/pixi-holga?branch=master)
