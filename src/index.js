@@ -135,17 +135,17 @@ export class Camera {
    * Checks if a Point is visible
    */
   isVisible (x, y) {
-    if (!y) {
-      x = x.x
-      y = x.y
+    if (typeof y === 'undefined') {
+      y = typeof x.y === 'undefined' ? x.pos.y : x.y
+      x = typeof x.x === 'undefined' ? x.pos.x : x.x
     }
 
-    return (!(
-      x < this.viewport.pos[0] ||
-      y < this.viewport.pos[1] ||
-      x >= this.viewport.pos[2] ||
-      y >= this.viewport.pos[3]
-    ))
+    return (
+      x >= this.viewport.pos[0] &&
+      y >= this.viewport.pos[1] &&
+      x < this.viewport.pos[2] &&
+      y < this.viewport.pos[3]
+    )
   }
 
   /**
@@ -217,6 +217,10 @@ export class Camera {
    * cases, such as when viewport is larger than the map.
    */
   _clampViewportBounds () {
+    if (this.viewport.width < 0 || this.bounds.width < 0) {
+      throw new Error('Camera::_clampViewportBounds viewport or bounds are negative')
+    }
+
     /**
      * Not convinced the width and height restrictions work in all cases
      */
@@ -284,7 +288,7 @@ export class Camera {
    * Translates a single sprite from world coords to screen/camera coords.
    */
   translateSprite (sprite, x, y) {
-    if (this.isVisible({ x, y })) {
+    if (!this.isVisible(x, y)) {
       sprite.visible = false
       return
     }
