@@ -1,6 +1,6 @@
 {
   "name": "pixi-holga",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Pixi powered camera",
   "main": "lib/index.js",
   "module": "lib/index.mjs",
