@@ -97,10 +97,14 @@ export class Camera {
 
   /**
    * Resizes the viewport.
-   * If the camera is zoomed then it unzooms, resizes, and rezooms. Some funkiness
-   * _might_ occur.
+   * If the camera is zoomed then it unzooms, resizes, and rezooms. Some
+   * funkiness _might_ occur.
    */
   resize (rect) {
+    if (!(rect instanceof Rect)) {
+      throw new Error('Camera::resize requires a Rect')
+    }
+
     if (this._scale === 1) {
       this._setViewport(rect)
       this._maxViewport = Rect.of(this.viewport)
@@ -145,6 +149,14 @@ export class Camera {
   }
 
   /**
+   * Zoom methods
+   * @TODO due to the way culling works, zoom levels should be integers, or the
+   * viewport will get in to an odd state, which should be handled by padding
+   * floats and rendering with clipping (can an exterior container do an
+   * overflow: hidden type of thing?). For now keep viewports ^2.
+   */
+
+  /**
    * Set the scale based on the zoom level.
    * Zoom level is a linear range, but, it scales exponentially.
    */
@@ -152,14 +164,6 @@ export class Camera {
     zoom = zoom || this.zoom
     this._scale = setScale(zoom)
   }
-
-  /**
-   * Zoom methods
-   * @TODO due to the way culling works, zoom levels should be integers, or the
-   * viewport will get in to an odd state, which should be handled by padding
-   * floats and rendering with clipping (can an exterior container do an
-   * overflow: hidden type of thing?). For now keep viewports ^2.
-   */
 
   /**
    * Clamps zoom to the specified zoom range
@@ -209,11 +213,33 @@ export class Camera {
    * pan to snap and snapTo.
    */
   /**
-   * @TODO This assumes the map fits in the viewport, which is not always correct,
-   * we need to supply a max world boundary to clamp the camera to.
+   * @TODO This uses the world boundary, but, there can be a couple of edge
+   * cases, such as when viewport is larger than the map.
    */
   _clampViewportBounds () {
-    // @TODO this could all be more efficient
+    /**
+     * Not convinced the width and height restrictions work in all cases
+     */
+    if (this.viewport.width > this.bounds.width) {
+      this.resize(Rect.of(
+        this.bounds.pos[0], this.viewport.pos[1],
+        this.bounds.pos[2], this.viewport.pos[3]
+      ))
+    }
+
+    if (this.viewport.height > this.bounds.height) {
+      this.resize(Rect.of(
+        this.viewport.pos[0], this.bounds.pos[1],
+        this.viewport.pos[2], this.bounds.pos[3]
+      ))
+    }
+
+    /**
+     * @TODO this can cause issue when the map is smaller than the viewport
+     * that is specified, hence the above ensures that the viewport is always
+     * at least as large as the world bounds. This does not solve all
+     * edge cases.
+     */
     if (this.viewport.pos[0] < 0) {
       this.viewport.translate(-this.viewport.pos[0], 0)
     }
