@@ -38,18 +38,18 @@ export class Camera {
     this.bounds = bounds
     // this.zoom = zoom
     this.zoom = 1
-    this.settings = {
-      ...defaultSettings,
-      ...settings
-    }
+    this.settings = Object.assign({},
+      defaultSettings,
+      settings
+    )
 
     // Scale is applied at render to sprites, we calculate eagerly as don’t
     // really want an unnecessary power application during render loop
     this._scale = Math.pow(2, this.zoom - 1)
 
-    // With maxViewport we're really after dimensions, this will give it to us
+    // With _maxViewport we're really after dimensions, this will give it to us
     // but x1, y1 will not necessarily be 0, which is probably unexpected.
-    this.maxViewport = Rect.scale(this.viewport, this._scale)
+    this._maxViewport = Rect.scale(this.viewport, this._scale)
   }
 
   static of (params = {}) {
@@ -74,7 +74,7 @@ export class Camera {
   resize (rect) {
     if (this._scale === 1) {
       this._setViewport(rect)
-      this.maxViewport = Rect.of(this.viewport)
+      this._maxViewport = Rect.of(this.viewport)
       return
     }
 
@@ -83,7 +83,7 @@ export class Camera {
     this.setZoom(1)
 
     this._setViewport(rect)
-    this.maxViewport = Rect.scale(this.viewport, this._scale)
+    this._maxViewport = Rect.scale(this.viewport, this._scale)
 
     this.setZoom(cached)
   }
@@ -152,7 +152,7 @@ export class Camera {
     this._setScale(this.zoom)
 
     // Calculate new viewport based on new zoom level (which is exponential)
-    const desired = Rect.scale(this.maxViewport, 1 / this._scale)
+    const desired = Rect.scale(this._maxViewport, 1 / this._scale)
     const diffX = this.viewport.width - desired.width
     const diffY = this.viewport.height - desired.height
     const newView = Rect.constrict(this.viewport, diffX * 0.5, diffY * 0.5)

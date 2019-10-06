@@ -5,6 +5,11 @@ import buble from 'rollup-plugin-buble'
 
 import pkg from './package.json'
 
+const bubleOptions = {
+  exclude: ['node_modules/**'],
+  objectAssign: true
+}
+
 export default [
   {
     input: 'src/index.js',
@@ -16,9 +21,7 @@ export default [
     plugins: [
       resolve(),
       commonjs(),
-      buble({
-        exclude: ['node_modules/**']
-      })
+      buble(bubleOptions)
     ]
   },
   {
@@ -35,9 +38,7 @@ export default [
       }
     ],
     plugins: [
-      buble({
-        exclude: ['node_modules/**']
-      })
+      buble(bubleOptions)
     ]
   }
 ]
