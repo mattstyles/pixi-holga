@@ -6,6 +6,18 @@ const defaultSettings = {
   cellSize: Point.of(10, 10)
 }
 
+const defaultCameraOptions = {
+  viewport: Rect.of(0, 0, 16, 16)
+}
+
+const setInitialBounds = (bounds, viewport, def) => {
+  if (bounds) {
+    return bounds
+  }
+
+  return Rect.of(viewport ? viewport : def)
+}
+
 /**
  * Tried to scale linearly, but, it didn’t work so well, so zooming will be
  * exponential for now which works with ^2 viewports nicely. Non ^2 viewports
@@ -18,13 +30,10 @@ export class Camera {
     container = null,
 
     // Current viewport being rendered
-    viewport = Rect.of(0, 0, 16, 16),
+    viewport = null,
 
     // Current bounds of camera movement in world
-    bounds = Rect.of(0, 0, 16, 16),
-
-    // sprite pool to use for tiles
-    pool = null,
+    bounds = null,
 
     // Zoom settings -- disable for now as it mucks with max viewport calcs.
     // If you want to start zoomed, then setZoom after instantiation
@@ -34,8 +43,11 @@ export class Camera {
     settings = {}
   } = {}) {
     this.container = container
-    this.viewport = viewport
-    this.bounds = bounds
+    this.viewport = viewport || Rect.of(defaultCameraOptions.viewport)
+
+    // Set bounds to either the supplied bounds rect or the viewport, or the default
+    this.bounds = setInitialBounds(bounds, viewport, defaultCameraOptions.viewport)
+
     // this.zoom = zoom
     this.zoom = 1
     this.settings = Object.assign({},
@@ -64,6 +76,13 @@ export class Camera {
       (this.viewport.width * this._scale) * this.settings.cellSize.x,
       (this.viewport.height * this._scale) * this.settings.cellSize.y
     )
+  }
+
+  /**
+   * Set world bounds for the camera
+   */
+  setWorldBounds (rect) {
+    this.bounds = rect
   }
 
   /**
