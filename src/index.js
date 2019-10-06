@@ -86,7 +86,13 @@ export class Camera {
    * Set world bounds for the camera
    */
   setWorldBounds (rect) {
+    if (!(rect instanceof Rect)) {
+      throw new Error('Camera::setWorldBounds requires a Rect')
+    }
+
     this.bounds = rect
+
+    return this
   }
 
   /**
@@ -109,14 +115,16 @@ export class Camera {
     this._maxViewport = Rect.scale(this.viewport, this._scale)
 
     this.setZoom(cached)
+
+    return this
   }
 
   /**
-   * Sets the viewport to a new Rect, and allocates more pool items if necessary.
+   * Sets the viewport to a new Rect.
    */
   _setViewport (rect) {
     this.viewport = rect
-    this.checkViewportBounds()
+    this._clampViewportBounds()
   }
 
   /**
@@ -156,7 +164,7 @@ export class Camera {
   /**
    * Clamps zoom to the specified zoom range
    */
-  _checkZoom () {
+  _clampZoom () {
     const [min, max] = this.settings.zoomRange
     this.zoom = clamp(this.zoom, min, max)
   }
@@ -171,7 +179,7 @@ export class Camera {
     }
 
     this.zoom = zoom
-    this._checkZoom()
+    this._clampZoom()
 
     this._setScale(this.zoom)
 
@@ -182,6 +190,8 @@ export class Camera {
     const newView = Rect.constrict(this.viewport, diffX * 0.5, diffY * 0.5)
 
     this._setViewport(newView)
+
+    return this
   }
 
   /**
@@ -190,6 +200,7 @@ export class Camera {
    */
   applyZoom (amount = 0) {
     this.setZoom(this.zoom + amount)
+    return this
   }
 
   /**
@@ -201,7 +212,7 @@ export class Camera {
    * @TODO This assumes the map fits in the viewport, which is not always correct,
    * we need to supply a max world boundary to clamp the camera to.
    */
-  checkViewportBounds () {
+  _clampViewportBounds () {
     // @TODO this could all be more efficient
     if (this.viewport.pos[0] < 0) {
       this.viewport.translate(-this.viewport.pos[0], 0)
@@ -227,7 +238,9 @@ export class Camera {
     }
 
     this.viewport.translate(x, y)
-    this.checkViewportBounds()
+    this._clampViewportBounds()
+
+    return this
   }
 
   panTo (x, y) {
@@ -236,11 +249,9 @@ export class Camera {
       return
     }
 
-    this.viewport.translate(
-      x - this.viewport.pos[0],
-      y - this.viewport.pos[1]
-    )
-    this.checkViewportBounds()
+    this.pan(x - this.viewport.pos[0], y - this.viewport.pos[1])
+
+    return this
   }
 
   /**
@@ -258,5 +269,7 @@ export class Camera {
       (y - this.viewport.pos[1]) * this.settings.cellSize.y * this._scale
     )
     sprite.scale.set(this._scale)
+
+    return sprite
   }
 }
