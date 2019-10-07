@@ -2,6 +2,7 @@
 import resolve from 'rollup-plugin-node-resolve'
 import commonjs from 'rollup-plugin-commonjs'
 import buble from 'rollup-plugin-buble'
+import { uglify } from 'rollup-plugin-uglify'
 
 import pkg from './package.json'
 
@@ -10,20 +11,31 @@ const bubleOptions = {
   objectAssign: true
 }
 
+const umd = {
+  name: 'Holga',
+  file: 'dist/pixi-holga.js'
+}
+
 export default [
+  // umd
   {
     input: 'src/index.js',
     output: {
-      name: pkg.name,
-      file: pkg.browser,
-      format: 'umd'
+      name: umd.name,
+      file: umd.file,
+      format: 'umd',
+      sourcemap: true
     },
     plugins: [
       resolve(),
       commonjs(),
-      buble(bubleOptions)
+      buble(bubleOptions),
+      uglify({
+        sourcemap: true
+      })
     ]
   },
+  // cjs/es
   {
     input: 'src/index.js',
     external: ['mathutil'],
