@@ -371,3 +371,41 @@ tape('Camera::translateSprite', t => {
   c.translateSprite(s2, 128, 2)
   t.equal(s2.visible, false, 'sets the sprite as not visible if outside viewport')
 })
+
+tape('Camera::toScreenCoords', t => {
+  t.plan(4)
+
+  const c = Camera.of({
+    viewport: Rect.of(0, 0, 8, 8),
+    settings: {
+      cellSize: Point.of(10, 10)
+    }
+  })
+
+  t.deepEqual(c.toScreenCoords(0, 0).pos, [0, 0], 'origin is mapped correctly')
+  t.deepEqual(c.toScreenCoords(2, 2).pos, [20, 20], 'same x and same y works')
+  t.deepEqual(c.toScreenCoords(7, 4).pos, [70, 40], 'different x and y works')
+  t.deepEqual(
+    c.toScreenCoords(12, 12).pos, [120, 120],
+    'non visible locations will still be mapped'
+  )
+})
+
+tape('Camera::toWorldCoords', t => {
+  t.plan(4)
+
+  const c = Camera.of({
+    viewport: Rect.of(0, 0, 8, 8),
+    settings: {
+      cellSize: Point.of(10, 10)
+    }
+  })
+
+  t.deepEqual(c.toWorldCoords(0, 0).pos, [0, 0], 'origin is mapped correctly')
+  t.deepEqual(c.toWorldCoords(30, 30).pos, [3, 3], 'same x and same y works')
+  t.deepEqual(c.toWorldCoords(45, 72).pos, [4, 7], 'world coords are rounded down')
+  t.deepEqual(
+    c.toWorldCoords(120, 110).pos, [12, 11],
+    'non visible locations will still be mapped'
+  )
+})

@@ -262,7 +262,7 @@ export class Camera {
   }
 
   pan (x, y) {
-    if (x instanceof Point) {
+    if ((x.x && x.y) || x instanceof Point) {
       this.pan(x.x, x.y)
       return
     }
@@ -274,7 +274,7 @@ export class Camera {
   }
 
   panTo (x, y) {
-    if (x instanceof Point) {
+    if ((x.x && x.y) || x instanceof Point) {
       this.panTo(x.x, x.y)
       return
     }
@@ -293,13 +293,46 @@ export class Camera {
       return
     }
 
+    const [sx, sy] = this.toScreenCoords(x, y).pos
+
     sprite.visible = true
-    sprite.position.set(
-      (x - this.viewport.pos[0]) * this.settings.cellSize.x * this._scale,
-      (y - this.viewport.pos[1]) * this.settings.cellSize.y * this._scale
-    )
+    sprite.position.set(sx, sy)
     sprite.scale.set(this._scale)
 
     return sprite
+  }
+
+  /**
+   * Converts world coords to screen coords
+   * @param {integer} x - world x coord
+   * @param {integer} y - world y coord
+   * @returns {Mathutil.Point} - [x, y] of screen coord
+   */
+  toScreenCoords (x, y) {
+    if ((x.x && x.y) || x instanceof Point) {
+      return this.toScreenCoords(x.x, x.y)
+    }
+
+    return Point.of(
+      (x - this.viewport.pos[0]) * this.settings.cellSize.x * this._scale,
+      (y - this.viewport.pos[1]) * this.settings.cellSize.y * this._scale
+    )
+  }
+
+  /**
+   * Converts screen coords to world coords
+   * @param {float} x - screen x coord
+   * @param {float} y - screen y coord
+   * @returns {Mathutil.Point} - [x, y] of world coord
+   */
+  toWorldCoords (x, y) {
+    if ((x.x && x.y) || x instanceof Point) {
+      return this.toScreenCoords(x.x, x.y)
+    }
+
+    return Point.of(
+      (x - this.viewport.pos[0]) * (1 / this.settings.cellSize.x * this._scale) | 0,
+      (y - this.viewport.pos[1]) * (1 / this.settings.cellSize.y * this._scale) | 0
+    )
   }
 }
