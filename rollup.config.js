@@ -39,7 +39,9 @@ export default [
   // cjs/es
   {
     input: 'src/index.js',
-    external: ['mathutil'],
+    external: [
+      ...Object.keys(pkg.dependencies)
+    ],
     output: [
       {
         file: pkg.main,

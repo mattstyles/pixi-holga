@@ -5,8 +5,10 @@
   "main": "lib/pixi-holga.js",
   "module": "lib/pixi-holga.mjs",
   "jsnext:main": "lib/pixi-holga.mjs",
+  "unpkg": "dist/pixi-holga.min.js",
+  "jsdelivr": "dist/pixi-holga.min.js",
   "scripts": {
-    "clean": "rimraf dist && rimraf lib",
+    "clean": "rimraf dist lib",
     "test": "tape -r buba/register src/**/*.spec.js",
     "prepublish": "npm run build",
     "prepack": "npm run build",
