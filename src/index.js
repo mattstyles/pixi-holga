@@ -1,5 +1,12 @@
 
 import { clamp, Rect, Point } from 'mathutil'
+import EventEmitter from 'eventemitter3'
+
+export const events = {
+  onResize: 'holga::onResize',
+  onZoom: 'holga::onZoom',
+  onPan: 'holga::onPan'
+}
 
 const defaultSettings = {
   zoomRange: [1, 4],
@@ -66,6 +73,9 @@ export class Camera {
     // With _maxViewport we're really after dimensions, this will give it to us
     // but x1, y1 will not necessarily be 0, which is probably unexpected.
     this._maxViewport = Rect.scale(this.viewport, this._scale)
+
+    // Create event EventEmitter
+    this.events = new EventEmitter()
   }
 
   static of (params = {}) {
@@ -119,6 +129,8 @@ export class Camera {
     this._maxViewport = Rect.scale(this.viewport, this._scale)
 
     this.setZoom(cached)
+
+    this.events.emit(events.onResize, this)
 
     return this
   }
@@ -195,6 +207,8 @@ export class Camera {
 
     this._setViewport(newView)
 
+    this.events.emit(events.onZoom, this)
+
     return this
   }
 
@@ -269,6 +283,8 @@ export class Camera {
 
     this.viewport.translate(x, y)
     this._clampViewportBounds()
+
+    this.events.emit(events.onPan, this)
 
     return this
   }

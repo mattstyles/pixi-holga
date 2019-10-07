@@ -73,6 +73,7 @@
     "tape": "^4.11.0"
   },
   "dependencies": {
+    "eventemitter3": "^4.0.0",
     "mathutil": "^2.3.0"
   }
 }
