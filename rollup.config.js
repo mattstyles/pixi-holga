@@ -21,11 +21,18 @@ export default [
   // umd
   {
     input: 'src/index.js',
+    external: [
+      ...Object.keys(pkg.dependencies)
+    ],
     output: {
       name: umd.name,
       file: umd.file,
       format: 'umd',
-      sourcemap: true
+      sourcemap: true,
+      globals: {
+        mathutil: 'Mathutil',
+        eventemitter3: 'EventEmitter3'
+      }
     },
     plugins: [
       resolve(),
