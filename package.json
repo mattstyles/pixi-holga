@@ -1,6 +1,6 @@
 {
   "name": "pixi-holga",
-  "version": "0.5.1",
+  "version": "0.6.0",
   "description": "Pixi powered camera",
   "main": "lib/pixi-holga.js",
   "module": "lib/pixi-holga.esm.js",
@@ -74,7 +74,9 @@
     "tape": "^4.11.0"
   },
   "dependencies": {
-    "eventemitter3": "^4.0.0",
-    "mathutil": "^2.3.0"
+    "eventemitter3": "^4.0.0"
+  },
+  "peerDependencies": {
+    "mathutil": "^3.0.2"
   }
 }
