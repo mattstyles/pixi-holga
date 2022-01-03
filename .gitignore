@@ -1,6 +1,7 @@
 lib
+esm
 dist
 .cache
 node_modules
 *.log*
-
+.parcel-cache

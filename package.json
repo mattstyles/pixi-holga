@@ -1,30 +1,40 @@
 {
   "name": "pixi-holga",
-  "version": "0.6.0",
+  "version": "1.0.0-alpha",
   "description": "Pixi powered camera",
-  "main": "lib/pixi-holga.js",
-  "module": "lib/pixi-holga.esm.js",
-  "jsnext:main": "lib/pixi-holga.esm.js",
+  "main": "lib/index.js",
+  "module": "esm/index.js",
+  "jsnext:main": "esm/index.js",
   "unpkg": "dist/pixi-holga.min.js",
   "jsdelivr": "dist/pixi-holga.min.js",
-  "scripts": {
-    "clean": "rimraf dist lib",
-    "test": "tape -r buba/register src/**/*.spec.js",
-    "prepublish": "npm run build",
-    "prepack": "npm run build",
-    "watch": "rollup -c -w",
-    "prebuild": "npm run clean",
-    "build": "rollup -c"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged",
-      "pre-push": "npm run test"
+  "typings": "lib/index.d.ts",
+  "exports": {
+    ".": {
+      "require": "./lib/index.js",
+      "default": "./esm/index.js"
+    },
+    "./*": {
+      "require": "./lib/*.js",
+      "default": "./esm/*.js"
     }
+  },
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "build": "NODE_ENV=production rimraf lib && swc src --config-file .swcrc -d lib",
+    "build:esm": "NODE_ENV=production rimraf esm && swc src --config-file .swcrc.esm -d esm",
+    "build:watch": "swc -w src -d lib",
+    "types": "NODE_ENV=production tsc --build tsconfig.build.json",
+    "types:watch": "tsc -w --build tsconfig.build.json",
+    "size": "size-limit",
+    "watch": "concurrently --kill-others \"pnpm run build:watch\" \"pnpm run types:watch\" \"pnpm run test:watch\"",
+    "build:all": "pnpm run build && pnpm run build:esm && pnpm run types",
+    "example": "pnpm run build && pnpm run build:esm && parcel examples/index.html"
   },
   "files": [
     "dist",
-    "lib"
+    "lib",
+    "esm"
   ],
   "author": "Matt Styles",
   "license": "MIT",
@@ -43,40 +53,23 @@
     "url": "https://github.com/mattstyles/pixi-holga/issues"
   },
   "homepage": "https://github.com/mattstyles/pixi-holga#readme",
-  "lint-staged": {
-    "*.js": [
-      "standard"
-    ],
-    "*.jsx": [
-      "standard"
-    ]
-  },
-  "standard": {
-    "parser": "babel-eslint",
-    "ignore": [
-      "**/node_modules/**",
-      "**/lib/"
-    ]
-  },
   "devDependencies": {
-    "babel-eslint": "^10.0.3",
-    "buba": "^4.0.2",
-    "husky": "^3.0.8",
-    "lint-staged": "^9.4.1",
-    "rimraf": "^3.0.0",
-    "rollup": "^1.23.1",
-    "rollup-plugin-buble": "^0.19.8",
-    "rollup-plugin-commonjs": "^10.1.0",
-    "rollup-plugin-filesize": "^6.2.0",
-    "rollup-plugin-node-resolve": "^5.2.0",
-    "rollup-plugin-terser": "^5.1.2",
-    "standard": "^14.3.1",
-    "tape": "^4.11.0"
+    "@swc/cli": "^0.1.55",
+    "@swc/core": "^1.2.124",
+    "@swc/jest": "^0.2.15",
+    "@types/jest": "^27.4.0",
+    "@types/offscreencanvas": "^2019.6.4",
+    "chokidar": "^3.5.2",
+    "concurrently": "^6.5.1",
+    "parcel": "^2.0.1",
+    "jest": "^27.4.5",
+    "rimraf": "^3.0.2",
+    "speedrun": "^1.0.2",
+    "stats.js": "^0.17.0",
+    "typescript": "^4.5.4"
   },
   "dependencies": {
-    "eventemitter3": "^4.0.0"
-  },
-  "peerDependencies": {
-    "mathutil": "^3.0.2"
+    "pixi.js": "^6.2.0",
+    "mathutil": "^4"
   }
 }
