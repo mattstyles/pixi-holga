@@ -24,7 +24,8 @@ const app = new Application({
 
 const texture = Texture.from(bunnyTexture)
 const camera = new Camera()
-camera.fov = Point.of(10, 10)
+camera.setFov(Point.of(10, 10))
+camera.setProjection(Point.of(25, 32))
 const projection = Point.of(25, 32)
 
 class Char {
@@ -68,10 +69,13 @@ function render() {
     }
 
     // World transform + camera scale
-    ent.sprite.position.set(
-      ent.pos.x * projection.x * camera.scale.x - vb.pos[0] * projection.x,
-      ent.pos.y * projection.y * camera.scale.y - vb.pos[1] * projection.y
-    )
+    // ent.sprite.position.set(
+    //   ent.pos.x * projection.x * camera.scale.x - vb.pos[0] * projection.x,
+    //   ent.pos.y * projection.y * camera.scale.y - vb.pos[1] * projection.y
+    // )
+    const position = camera.applyProjection(ent.pos)
+    ent.sprite.position.set(position.x, position.y)
+
     ent.sprite.scale.set(camera.scale.x, camera.scale.y)
   })
 
@@ -82,26 +86,26 @@ app.ticker.add(render)
 
 document.addEventListener('keydown', (event) => {
   if (event.key === 'ArrowUp') {
-    camera.position.y -= 1
+    camera.y -= 1
   }
 
   if (event.key === 'ArrowDown') {
-    camera.position.y += 1
+    camera.y += 1
   }
 
   if (event.key === 'ArrowLeft') {
-    camera.position.x -= 1
+    camera.x -= 1
   }
 
   if (event.key === 'ArrowRight') {
-    camera.position.x += 1
+    camera.x += 1
   }
   if (event.key === '=') {
-    camera.zoom *= 0.9
+    camera.setZoom(camera.zoom * 0.9)
   }
 
   if (event.key === '-') {
-    camera.zoom *= 1.1
+    camera.setZoom(camera.zoom * 1.1)
   }
 })
 
