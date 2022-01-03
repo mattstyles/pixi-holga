@@ -6,6 +6,10 @@ export class Camera {
   zoom: number = 1
   screen: Rect = Rect.of(0, 0, 320, 240)
 
+  setZoom(zoom: number) {
+    this.zoom = zoom
+  }
+
   // Use a getter for now as I don't think this will want to end up being an
   // alias for zoom
   get scale() {
@@ -17,10 +21,10 @@ export class Camera {
    */
   getViewBounds(): Rect {
     return Rect.of(
-      this.position.x - this.fov.x,
-      this.position.y - this.fov.y,
-      this.position.x + this.fov.x,
-      this.position.y + this.fov.y
+      this.position.x - this.fov.x * this.zoom,
+      this.position.y - this.fov.y * this.zoom,
+      this.position.x + this.fov.x * this.zoom,
+      this.position.y + this.fov.y * this.zoom
     )
   }
 

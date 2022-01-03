@@ -25,7 +25,7 @@ const app = new Application({
 const texture = Texture.from(bunnyTexture)
 const camera = new Camera()
 camera.fov = Point.of(10, 10)
-const worldTransform = Point.of(25, 32)
+const projection = Point.of(25, 32)
 
 class Char {
   // World coords
@@ -40,8 +40,8 @@ class Char {
     this.sprite = new Sprite(texture)
     // this.sprite.anchor.set(0.5, 0.5)
     this.sprite.position.set(
-      this.pos.x * worldTransform.x,
-      this.pos.y * worldTransform.y
+      this.pos.x * projection.x,
+      this.pos.y * projection.y
     )
   }
 }
@@ -69,10 +69,8 @@ function render() {
 
     // World transform + camera scale
     ent.sprite.position.set(
-      ent.pos.x * worldTransform.x * camera.scale.x -
-        vb.pos[0] * worldTransform.x,
-      ent.pos.y * worldTransform.y * camera.scale.y -
-        vb.pos[1] * worldTransform.y
+      ent.pos.x * projection.x * camera.scale.x - vb.pos[0] * projection.x,
+      ent.pos.y * projection.y * camera.scale.y - vb.pos[1] * projection.y
     )
     ent.sprite.scale.set(camera.scale.x, camera.scale.y)
   })
