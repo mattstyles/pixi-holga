@@ -138,7 +138,7 @@ const camera = Camera.of({
 })
 ```
 
-The viewport is described by a rectangular centered on `position` with edges of size `fov / zoom`, in this case, our viewport would be [5, 5, 15, 15].
+The viewport is described by a rectangular region centered on `position` with edges of size `fov / zoom`, in this case, our viewport would be [5, 5, 15, 15]. Even though our fov extends 10 units in each direction we are zoomed in by a factor of 2, therefore 5 units in each direction, or [5, 5, 15, 15].
 
 We can use the following to use the camera projection to convert from a coordinate in world space to one in viewport space:
 
